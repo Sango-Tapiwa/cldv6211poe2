@@ -1,0 +1,75 @@
+﻿@model IEnumerable<EventEase.Models.Events>
+
+@{
+    ViewData["Title"] = "Event Management Dashboard";
+}
+
+<h1 class="my-4 text-center text-primary">Event Management Dashboard</h1>
+
+<!-- Search Form -->
+<form asp-action="Index" method="get" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="searchString" class="form-control" placeholder="Search by Event Name" />
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+<!-- Error Message -->
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<!-- Create Button -->
+<div class="mb-4">
+    <a class="btn btn-success" asp-action="Create">Create New Event</a>
+</div>
+
+<!-- Events Table -->
+<div class="card mb-4">
+    <div class="card-header bg-info text-white">
+        <h4 class="card-title">Upcoming Events</h4>
+    </div>
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <table class="table table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.First().EventName)</th>
+                        <th>@Html.DisplayNameFor(model => model.First().EventDate)</th>
+                        <th>@Html.DisplayNameFor(model => model.First().EventType)</th>
+                        <th>@Html.DisplayNameFor(model => model.First().TicketPrice)</th>
+                        <th>@Html.DisplayNameFor(model => model.First().Venue.VenueName)</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.EventName</td>
+                            <td>@item.EventDate.ToString("yyyy-MM-dd")</td>
+                            <td>@item.EventType</td>
+                            <td>@item.TicketPrice.ToString("C")</td>
+                            <td>@item.Venue?.VenueName ?? "No Venue Assigned"</td>
+                            <td>
+                                <a class="btn btn-primary btn-sm" asp-action="Edit" asp-route-id="@item.EventID">Edit</a>
+                                <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@item.EventID">Details</a>
+                                <form asp-action="Delete" asp-route-id="@item.EventID" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="alert alert-warning">No events found.</div>
+        }
+    </div>
+</div>
